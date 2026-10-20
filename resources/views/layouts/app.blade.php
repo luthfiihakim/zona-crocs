@@ -13,17 +13,27 @@
         <a class="brand" href="/">ZONA<span>CROCS</span></a>
         <nav>
             @auth
+                @if (auth()->user()->isStaff())
+                    <a class="nav-link {{ request()->routeIs('dashboard') ? 'active' : '' }}" href="{{ route('dashboard') }}">Dashboard</a>
+                    <a class="nav-link {{ request()->routeIs('categories.*') ? 'active' : '' }}" href="{{ route('categories.index') }}">Kategori</a>
+                @endif
                 <span class="who">{{ auth()->user()->name }}</span>
                 <form method="POST" action="{{ route('logout') }}">
                     @csrf
-                    <button class="link" type="submit">Keluar</button>
+                    <button class="btn btn-dark btn-sm" type="submit">Keluar</button>
                 </form>
             @else
-                <a href="{{ route('login') }}">Masuk</a>
+                <a class="nav-link" href="{{ route('login') }}">Masuk</a>
             @endauth
         </nav>
     </header>
     <main class="container">
+        @if (session('success'))
+            <div class="alert ok">{{ session('success') }}</div>
+        @endif
+        @if (session('error'))
+            <div class="alert bad">{{ session('error') }}</div>
+        @endif
         @yield('content')
     </main>
 </body>

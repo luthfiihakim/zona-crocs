@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\CategoryController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -23,9 +24,15 @@ Route::middleware('guest')->group(function () {
 Route::middleware('auth')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
-    Route::middleware('role:admin,staff')
-        ->get('/dashboard', fn () => view('dashboard'))
-        ->name('dashboard');
+    Route::middleware('role:admin,staff')->group(function () {
+        Route::get('/dashboard', fn () => view('dashboard'))->name('dashboard');
+        Route::resource('categories', CategoryController::class)->except(['show', 'destroy']);
+    });
+
+    Route::middleware('role:admin')->group(function () {
+        Route::delete('/categories/{category}', [CategoryController::class, 'destroy'])
+            ->name('categories.destroy');
+    });
 
     Route::middleware('role:customer')
         ->get('/katalog', fn () => view('catalog'))
