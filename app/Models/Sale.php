@@ -37,4 +37,22 @@ class Sale extends Model
     {
         return $this->hasMany(Payment::class);
     }
+
+    public function statusLabel(): string
+    {
+        return [
+            'pending' => 'Menunggu bayar',
+            'paid' => 'Lunas',
+            'cancelled' => 'Dibatalkan',
+            'expired' => 'Kedaluwarsa',
+        ][$this->status] ?? $this->status;
+    }
+
+    public function statusBadge(): string
+    {
+        return [
+            'pending' => 'low',
+            'paid' => 'ok',
+        ][$this->status] ?? 'off';
+    }
 }
