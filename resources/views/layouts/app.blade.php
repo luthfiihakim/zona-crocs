@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="{{ asset('css/app.css') }}">
 </head>
 <body>
-    <div class="announce">Ukuran M11+ wajib PO</div>
+    <div class="announce">@yield('announce', 'Crocs Original dan Termurah Se Indonesia')</div>
     <header class="nav">
         <a class="brand" href="/">ZONA<span>CROCS</span></a>
         <nav>
@@ -16,6 +16,7 @@
                 @if (auth()->user()->isStaff())
                     <a class="nav-link {{ request()->routeIs('dashboard') ? 'active' : '' }}" href="{{ route('dashboard') }}">Dashboard</a>
                     <a class="nav-link {{ request()->routeIs('categories.*') ? 'active' : '' }}" href="{{ route('categories.index') }}">Kategori</a>
+                    <a class="nav-link {{ request()->routeIs('suppliers.*') ? 'active' : '' }}" href="{{ route('suppliers.index') }}">Supplier</a>
                 @endif
                 <span class="who">{{ auth()->user()->name }}</span>
                 <form method="POST" action="{{ route('logout') }}">

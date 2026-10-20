@@ -1,4 +1,5 @@
 @extends('layouts.app')
+@section('announce', 'Ukuran M11+ wajib PO')
 @section('title', 'Katalog')
 @section('content')
 <h1>Katalog</h1>

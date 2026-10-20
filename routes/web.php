@@ -3,6 +3,7 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CategoryController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\SupplierController;
 
 Route::get('/', function () {
     $user = auth()->user();
@@ -27,11 +28,14 @@ Route::middleware('auth')->group(function () {
     Route::middleware('role:admin,staff')->group(function () {
         Route::get('/dashboard', fn () => view('dashboard'))->name('dashboard');
         Route::resource('categories', CategoryController::class)->except(['show', 'destroy']);
+        Route::resource('suppliers', SupplierController::class)->except(['show', 'destroy']);
     });
 
     Route::middleware('role:admin')->group(function () {
         Route::delete('/categories/{category}', [CategoryController::class, 'destroy'])
             ->name('categories.destroy');
+        Route::delete('/suppliers/{supplier}', [SupplierController::class, 'destroy'])
+            ->name('suppliers.destroy');
     });
 
     Route::middleware('role:customer')
