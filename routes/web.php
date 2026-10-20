@@ -8,6 +8,8 @@ use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProductVariantController;
 use App\Http\Controllers\PurchaseController;
 use App\Http\Controllers\SaleController;
+use App\Http\Controllers\CartController;
+use App\Http\Controllers\CatalogController;
 
 Route::get('/', function () {
     $user = auth()->user();
@@ -57,7 +59,19 @@ Route::middleware('auth')->group(function () {
             ->name('sales.cancel');
     });
 
-    Route::middleware('role:customer')
-        ->get('/katalog', fn () => view('catalog'))
+    Route::get('/katalog', [CatalogController::class, 'index'])
         ->name('catalog');
+    Route::get('/katalog/{product:slug}', [CatalogController::class, 'show'])
+        ->name('catalog.show');
+
+    Route::middleware('role:customer')->group(function () {
+        Route::get('/keranjang', [CartController::class, 'index'])
+            ->name('cart.index');
+        Route::post('/keranjang', [CartController::class, 'add'])
+            ->name('cart.add');
+        Route::patch('/keranjang/{variant}', [CartController::class, 'update'])
+            ->name('cart.update');
+        Route::delete('/keranjang/{variant}', [CartController::class, 'remove'])
+            ->name('cart.remove');
+    });
 });
