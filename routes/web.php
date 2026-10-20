@@ -4,6 +4,8 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CategoryController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\SupplierController;
+use App\Http\Controllers\ProductController;
+use App\Http\Controllers\ProductVariantController;
 
 Route::get('/', function () {
     $user = auth()->user();
@@ -29,6 +31,11 @@ Route::middleware('auth')->group(function () {
         Route::get('/dashboard', fn () => view('dashboard'))->name('dashboard');
         Route::resource('categories', CategoryController::class)->except(['show', 'destroy']);
         Route::resource('suppliers', SupplierController::class)->except(['show', 'destroy']);
+        Route::resource('products', ProductController::class)->except(['destroy']);
+        Route::post('/products/{product}/variants', [ProductVariantController::class, 'store'])
+            ->name('products.variants.store');
+        Route::get('/variants/{variant}/edit', [ProductVariantController::class, 'edit'])->name('variants.edit');
+        Route::put('/variants/{variant}', [ProductVariantController::class, 'update'])->name('variants.update');
     });
 
     Route::middleware('role:admin')->group(function () {
@@ -36,6 +43,10 @@ Route::middleware('auth')->group(function () {
             ->name('categories.destroy');
         Route::delete('/suppliers/{supplier}', [SupplierController::class, 'destroy'])
             ->name('suppliers.destroy');
+        Route::delete('/products/{product}', [ProductController::class, 'destroy'])
+            ->name('products.destroy');
+        Route::delete('/variants/{variant}', [ProductVariantController::class, 'destroy'])
+            ->name('variants.destroy');
     });
 
     Route::middleware('role:customer')
