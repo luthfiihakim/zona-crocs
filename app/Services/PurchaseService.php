@@ -19,7 +19,7 @@ class PurchaseService
 
             // Kunci baris varian selama transaksi, urut by id agar tidak deadlock
             $variants = ProductVariant::whereIn('sku', $skus)
-                ->whereHas('product')
+                ->withLiveProduct()
                 ->orderBy('id')
                 ->lockForUpdate()
                 ->get()

@@ -29,4 +29,9 @@ class ProductVariant extends Model
     {
         return $this->hasMany(SaleItem::class);
     }
+
+    public function scopeWithLiveProduct($query)
+    {
+        return $query->whereHas('product', fn ($q) => $q->withoutTrashed());
+    }
 }

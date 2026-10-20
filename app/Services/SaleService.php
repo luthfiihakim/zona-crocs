@@ -19,7 +19,7 @@ class SaleService
             // Kunci baris varian (urut by id agar tidak deadlock)
             $variants = ProductVariant::with(['product', 'size'])
                 ->whereIn('sku', $skus)
-                ->whereHas('product')
+                ->withLiveProduct()
                 ->orderBy('id')
                 ->lockForUpdate()
                 ->get()
