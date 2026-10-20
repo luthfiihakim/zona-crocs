@@ -80,3 +80,16 @@ select:focus{outline:2px solid var(--lime);border-color:var(--ink)}
 .meta b{color:var(--ink)}
 .section-title{font:700 18px Montserrat,sans-serif;margin:28px 0 12px}
 .wide{max-width:640px;margin:0}
+
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:0 16px}
+@media (max-width:640px){.grid-2{grid-template-columns:1fr}}
+.error-list{margin:0;padding-left:18px}
+.items-table td{padding:8px}
+.items-table input{margin:0;min-height:42px}
+.items-table .col-sku{min-width:220px}
+.items-table .col-num{min-width:110px}
+.items-table .js-sub{white-space:nowrap;font-weight:600}
+.total-box{display:flex;justify-content:flex-end;align-items:baseline;gap:12px;margin:16px 0}
+.total-box b{font:700 22px Montserrat,sans-serif}
+.form-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+.filters input[type=date]{flex:1 1 140px}

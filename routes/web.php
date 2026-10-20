@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProductVariantController;
+use App\Http\Controllers\PurchaseController;
 
 Route::get('/', function () {
     $user = auth()->user();
@@ -36,6 +37,7 @@ Route::middleware('auth')->group(function () {
             ->name('products.variants.store');
         Route::get('/variants/{variant}/edit', [ProductVariantController::class, 'edit'])->name('variants.edit');
         Route::put('/variants/{variant}', [ProductVariantController::class, 'update'])->name('variants.update');
+        Route::resource('purchases', PurchaseController::class)->only(['index', 'create', 'store', 'show']);
     });
 
     Route::middleware('role:admin')->group(function () {
@@ -47,6 +49,8 @@ Route::middleware('auth')->group(function () {
             ->name('products.destroy');
         Route::delete('/variants/{variant}', [ProductVariantController::class, 'destroy'])
             ->name('variants.destroy');
+        Route::post('/purchases/{purchase}/cancel', [PurchaseController::class, 'cancel'])
+            ->name('purchases.cancel');
     });
 
     Route::middleware('role:customer')

@@ -17,9 +17,9 @@ class Purchase extends Model
 
     public function supplier(): BelongsTo
     {
-        return $this->belongsTo(Supplier::class);
+        return $this->belongsTo(Supplier::class)->withTrashed();
     }
-
+    
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);

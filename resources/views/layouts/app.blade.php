@@ -18,6 +18,7 @@
                     <a class="nav-link {{ request()->routeIs('products.*', 'variants.*') ? 'active' : '' }}" href="{{ route('products.index') }}">Produk</a>
                     <a class="nav-link {{ request()->routeIs('categories.*') ? 'active' : '' }}" href="{{ route('categories.index') }}">Kategori</a>
                     <a class="nav-link {{ request()->routeIs('suppliers.*') ? 'active' : '' }}" href="{{ route('suppliers.index') }}">Supplier</a>
+                    <a class="nav-link {{ request()->routeIs('purchases.*') ? 'active' : '' }}" href="{{ route('purchases.index') }}">Pembelian</a>
                 @endif
                 <span class="who">{{ auth()->user()->name }}</span>
                 <form method="POST" action="{{ route('logout') }}">
