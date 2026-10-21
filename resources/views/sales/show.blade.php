@@ -18,6 +18,10 @@
     <p class="muted">Catatan: {{ $sale->notes }}</p>
 @endif
 
+@if ($sale->shipping_address)
+    <p class="muted">Alamat kirim: {{ $sale->shipping_address }}</p>
+@endif
+
 <div class="card table-wrap">
     <table>
         <thead>

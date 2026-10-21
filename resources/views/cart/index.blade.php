@@ -47,7 +47,6 @@
         <span>Total</span><b>Rp {{ number_format($total, 0, ',', '.') }}</b>
     </div>
 
-    <button class="btn" type="button" disabled>LANJUT KE CHECKOUT</button>
-    <p class="muted">Checkout dibuat di langkah berikutnya. Stok baru ditahan saat checkout.</p>
+    <a class="btn" href="{{ route('checkout.create') }}">LANJUT KE CHECKOUT</a>
 @endif
 @endsection

@@ -4,12 +4,13 @@ namespace App\Http\Controllers;
 
 use App\Models\ProductVariant;
 use Illuminate\Http\Request;
+use App\Services\CartService;
 
 class CartController extends Controller
 {
     public function index()
     {
-        [$lines, $total] = $this->lines();
+        [$lines, $total] = app(CartService::class)->lines();
 
         return view('cart.index', compact('lines', 'total'));
     }
@@ -73,32 +74,5 @@ class CartController extends Controller
         session(['cart' => $cart]);
 
         return back()->with('success', 'Item dihapus dari keranjang.');
-    }
-
-    private function lines(): array
-    {
-        $cart = session('cart', []);
-
-        $variants = ProductVariant::with(['product', 'size'])
-            ->whereIn('id', array_keys($cart))
-            ->get()
-            ->keyBy('id');
-
-        $lines = [];
-        $total = 0;
-
-        foreach ($cart as $id => $qty) {
-            $v = $variants[$id] ?? null;
-
-            if (! $v || $v->product->trashed() || ! $v->product->is_active) {
-                continue;
-            }
-
-            $price = $v->product->base_price;
-            $lines[] = ['variant' => $v, 'qty' => $qty, 'price' => $price, 'sub' => $qty * $price];
-            $total += $qty * $price;
-        }
-
-        return [$lines, $total];
     }
 }

@@ -55,4 +55,11 @@ class Sale extends Model
             'paid' => 'ok',
         ][$this->status] ?? 'off';
     }
+
+    public const PAY_WINDOW_MINUTES = 60;
+
+    public function expiresAt()
+    {
+        return $this->created_at->copy()->addMinutes(self::PAY_WINDOW_MINUTES);
+    }
 }

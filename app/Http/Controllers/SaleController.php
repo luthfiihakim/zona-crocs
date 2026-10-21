@@ -39,7 +39,7 @@ class SaleController extends Controller
         $customers = User::where('role', 'customer')->orderBy('name')->get(['id', 'name', 'email']);
 
         $variants = ProductVariant::with(['product', 'size'])
-            ->whereHas('product')
+            ->withLiveProduct()
             ->orderBy('sku')
             ->get();
 

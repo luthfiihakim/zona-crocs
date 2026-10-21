@@ -10,6 +10,8 @@ use App\Http\Controllers\PurchaseController;
 use App\Http\Controllers\SaleController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\CatalogController;
+use App\Http\Controllers\CheckoutController;
+use App\Http\Controllers\OrderController;
 
 Route::get('/', function () {
     $user = auth()->user();
@@ -73,5 +75,16 @@ Route::middleware('auth')->group(function () {
             ->name('cart.update');
         Route::delete('/keranjang/{variant}', [CartController::class, 'remove'])
             ->name('cart.remove');
+        Route::get('/checkout', [CheckoutController::class, 'create'])
+            ->name('checkout.create');
+        Route::post('/checkout', [CheckoutController::class, 'store'])
+            ->name('checkout.store');
+
+        Route::get('/pesanan', [OrderController::class, 'index'])
+            ->name('orders.index');
+        Route::get('/pesanan/{sale}', [OrderController::class, 'show'])
+            ->name('orders.show');
+        Route::post('/pesanan/{sale}/batal', [OrderController::class, 'cancel'])
+            ->name('orders.cancel');
     });
 });

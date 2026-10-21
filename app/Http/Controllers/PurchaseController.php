@@ -41,7 +41,7 @@ class PurchaseController extends Controller
     {
         $suppliers = Supplier::orderBy('name')->get();
         $variants = ProductVariant::with(['product', 'size'])
-            ->whereHas('product')
+            ->withLiveProduct()
             ->orderBy('sku')
             ->get();
 

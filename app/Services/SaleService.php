@@ -10,9 +10,9 @@ use Illuminate\Support\Str;
 
 class SaleService
 {
-    public function create(array $data, array $attrs): Sale
+    public function create(array $data, array $attrs, bool $onlyActive = false): Sale
     {
-        return DB::transaction(function () use ($data, $attrs) {
+        return DB::transaction(function () use ($data, $attrs, $onlyActive) {
             $items = collect($data['items']);
             $skus = $items->pluck('sku')->all();
 
@@ -20,6 +20,7 @@ class SaleService
             $variants = ProductVariant::with(['product', 'size'])
                 ->whereIn('sku', $skus)
                 ->withLiveProduct()
+                ->when($onlyActive, fn ($q) => $q->whereHas('product', fn ($p) => $p->where('is_active', true)))
                 ->orderBy('id')
                 ->lockForUpdate()
                 ->get()
