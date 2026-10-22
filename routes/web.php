@@ -14,6 +14,7 @@ use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\MidtransNotificationController;
 use App\Http\Controllers\PaymentController;
+use App\Http\Controllers\DashboardController;
 
 Route::get('/', function () {
     $user = auth()->user();
@@ -39,7 +40,8 @@ Route::middleware('auth')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
     Route::middleware('role:admin,staff')->group(function () {
-        Route::get('/dashboard', fn () => view('dashboard'))->name('dashboard');
+        Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+        Route::get('/stok-rendah', [DashboardController::class, 'lowStock'])->name('stock.low');
         Route::resource('categories', CategoryController::class)->except(['show', 'destroy']);
         Route::resource('suppliers', SupplierController::class)->except(['show', 'destroy']);
         Route::resource('products', ProductController::class)->except(['destroy']);
