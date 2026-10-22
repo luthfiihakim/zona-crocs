@@ -12,6 +12,8 @@ use App\Http\Controllers\CartController;
 use App\Http\Controllers\CatalogController;
 use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\OrderController;
+use App\Http\Controllers\MidtransNotificationController;
+use App\Http\Controllers\PaymentController;
 
 Route::get('/', function () {
     $user = auth()->user();
@@ -22,6 +24,9 @@ Route::get('/', function () {
 
     return redirect()->route($user->isStaff() ? 'dashboard' : 'catalog');
 });
+
+Route::post('/midtrans/notification', MidtransNotificationController::class)
+    ->name('midtrans.notification');
 
 Route::middleware('guest')->group(function () {
     Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
@@ -86,5 +91,8 @@ Route::middleware('auth')->group(function () {
             ->name('orders.show');
         Route::post('/pesanan/{sale}/batal', [OrderController::class, 'cancel'])
             ->name('orders.cancel');
+        
+        Route::post('/pesanan/{sale}/bayar', [PaymentController::class, 'create'])->name('orders.pay');
+        Route::post('/pesanan/{sale}/sinkron', [PaymentController::class, 'sync'])->name('orders.sync');
     });
 });

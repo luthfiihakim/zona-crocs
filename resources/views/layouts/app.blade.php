@@ -6,6 +6,7 @@
     <title>@yield('title', 'Zona Crocs')</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Montserrat:wght@600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ asset('css/app.css') }}">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
 </head>
 <body>
     <div class="announce">@yield('announce', 'Crocs Original dan Termurah Se Indonesia')</div>

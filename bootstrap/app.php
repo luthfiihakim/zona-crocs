@@ -14,6 +14,8 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'role' => \App\Http\Middleware\EnsureRole::class,
         ]);
+
+        $middleware->validateCsrfTokens(except: ['midtrans/notification']);
     })
     ->withExceptions(function (Exceptions $exceptions) {
         //

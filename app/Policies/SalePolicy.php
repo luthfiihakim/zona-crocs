@@ -16,4 +16,11 @@ class SalePolicy
     {
         return $sale->customer_id === $user->id && $sale->status === 'pending';
     }
+
+    public function pay(User $user, Sale $sale): bool
+    {
+        return $sale->customer_id === $user->id
+            && $sale->status === 'pending'
+            && $sale->expiresAt()->isFuture();
+    }
 }

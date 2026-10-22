@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Sale;
+use App\Services\PaymentService;
 use App\Services\SaleService;
 use DomainException;
 use Illuminate\Http\Request;
@@ -20,11 +21,15 @@ class OrderController extends Controller
         return view('orders.index', compact('orders'));
     }
 
-    public function show(Sale $sale, SaleService $service)
+    public function show(Sale $sale, SaleService $service, PaymentService $payments)
     {
         Gate::authorize('view', $sale);
 
-        // Kedaluwarsa dicek juga saat halaman dibuka, tidak hanya oleh jadwal
+        if ($sale->status === 'pending') {
+            $payments->syncSale($sale);
+            $sale->refresh();
+        }
+
         if ($sale->status === 'pending' && $sale->expiresAt()->isPast()) {
             try {
                 $service->cancel($sale, 'expired');
@@ -39,9 +44,18 @@ class OrderController extends Controller
         return view('orders.show', compact('sale'));
     }
 
-    public function cancel(Sale $sale, SaleService $service)
+    public function cancel(Sale $sale, SaleService $service, PaymentService $payments)
     {
         Gate::authorize('cancel', $sale);
+
+        // Cek dulu apakah ternyata sudah dibayar
+        $payments->syncSale($sale);
+
+        if ($sale->fresh()->status !== 'pending') {
+            return back()->with('error', 'Pesanan sudah dibayar dan tidak bisa dibatalkan.');
+        }
+
+        $payments->cancelOpen($sale);
 
         try {
             $service->cancel($sale);

@@ -99,4 +99,52 @@ class SaleService
             $sale->update(['status' => $newStatus]);
         });
     }
+
+    public function markPaid(Sale $sale, ?string $method = null): string
+    {
+        return DB::transaction(function () use ($sale, $method) {
+            $sale = Sale::whereKey($sale->id)->lockForUpdate()->firstOrFail();
+
+            if ($sale->status === 'paid') {
+                return 'already_paid';
+            }
+
+            if ($sale->status === 'pending') {
+                $sale->update(['status' => 'paid', 'payment_method' => $method, 'paid_at' => now()]);
+
+                return 'paid';
+            }
+
+            if (in_array($sale->status, ['expired', 'cancelled'], true)) {
+                // Pembayaran terlambat: coba ambil kembali stoknya
+                $items = $sale->items()->get();
+
+                $variants = ProductVariant::whereIn('id', $items->pluck('product_variant_id'))
+                    ->orderBy('id')
+                    ->lockForUpdate()
+                    ->get()
+                    ->keyBy('id');
+
+                foreach ($items as $item) {
+                    if ($variants[$item->product_variant_id]->stock < $item->quantity) {
+                        $sale->update([
+                            'notes' => trim(($sale->notes ?? '').' [PERLU REFUND: pembayaran masuk setelah pesanan kedaluwarsa dan stok sudah habis]'),
+                        ]);
+
+                        return 'refund_needed';
+                    }
+                }
+
+                foreach ($items as $item) {
+                    $variants[$item->product_variant_id]->decrement('stock', $item->quantity);
+                }
+
+                $sale->update(['status' => 'paid', 'payment_method' => $method, 'paid_at' => now()]);
+
+                return 'revived';
+            }
+
+            return 'ignored';
+        });
+    }
 }
