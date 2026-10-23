@@ -15,6 +15,7 @@ use App\Http\Controllers\OrderController;
 use App\Http\Controllers\MidtransNotificationController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\UserController;
 
 Route::get('/', function () {
     $user = auth()->user();
@@ -36,7 +37,7 @@ Route::middleware('guest')->group(function () {
     Route::post('/register', [AuthController::class, 'register']);
 });
 
-Route::middleware('auth')->group(function () {
+Route::middleware(['auth', 'active'])->group(function () {
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
     Route::middleware('role:admin,staff')->group(function () {
@@ -66,6 +67,10 @@ Route::middleware('auth')->group(function () {
             ->name('purchases.cancel');
         Route::post('/sales/{sale}/cancel', [SaleController::class, 'cancel'])
             ->name('sales.cancel');
+        Route::resource('users', UserController::class)
+            ->except(['show', 'destroy']);
+        Route::patch('/users/{user}/toggle', [UserController::class, 'toggle'])
+            ->name('users.toggle');
     });
 
     Route::get('/katalog', [CatalogController::class, 'index'])

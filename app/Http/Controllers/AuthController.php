@@ -18,7 +18,10 @@ class AuthController extends Controller
 
     public function login(LoginRequest $request): RedirectResponse
     {
-        if (! Auth::attempt($request->only('email', 'password'), $request->boolean('remember'))) {
+        // Menambahkan validasi 'is_active' => true ke dalam kredensial login
+        $credentials = $request->only('email', 'password') + ['is_active' => true];
+
+        if (! Auth::attempt($credentials, $request->boolean('remember'))) {
             return back()
                 ->withErrors(['email' => 'Email atau password salah.'])
                 ->onlyInput('email');
@@ -47,6 +50,7 @@ class AuthController extends Controller
     public function logout(Request $request): RedirectResponse
     {
         Auth::logout();
+        
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 

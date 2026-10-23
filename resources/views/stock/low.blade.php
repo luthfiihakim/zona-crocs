@@ -3,7 +3,10 @@
 @section('content')
 <div class="toolbar">
     <h1>Stok Rendah</h1>
-    <a class="btn" href="{{ route('purchases.create') }}">+ Pembelian</a>
+    <div class="actions">
+        <a class="btn btn-outline" href="{{ route('dashboard') }}">Kembali</a>
+        <a class="btn" href="{{ route('purchases.create') }}">+ Pembelian</a>
+    </div>
 </div>
 
 <form method="GET" class="search">
