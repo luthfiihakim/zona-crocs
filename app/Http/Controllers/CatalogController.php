@@ -16,7 +16,7 @@ class CatalogController extends Controller
         $sizeId = $request->query('size');
         $sort = $request->query('sort');
 
-        $products = Product::with('category')
+        $products = Product::with(['category', 'variants:id,product_id,color', 'images'])
             ->where('is_active', true)
             ->withSum(['variants as ready_stock' => fn ($v) => $v->whereHas('size', fn ($s) => $s->where('is_preorder', false))], 'stock')
             ->when($q !== '', fn ($query) => $query->where('name', 'ilike', "%{$q}%"))
@@ -38,7 +38,7 @@ class CatalogController extends Controller
     {
         abort_unless($product->is_active || auth()->user()->isStaff(), 404);
 
-        $product->load(['category', 'variants.size']);
+        $product->load(['category', 'variants.size', 'images']);
 
         $variants = $product->variants->map(fn ($v) => [
             'id' => $v->id,
@@ -54,6 +54,9 @@ class CatalogController extends Controller
         $colors = $variants->pluck('color')->unique()->sort()->values();
         $poSizes = $variants->where('po', true)->pluck('size')->unique()->values();
 
-        return view('shop.show', compact('product', 'variants', 'colors', 'poSizes'));
+        // Menyiapkan data gallery foto berdasarkan warna produk
+        $gallery = $colors->mapWithKeys(fn ($c) => [$c => $product->imageUrls($c)])->toArray();
+
+        return view('shop.show', compact('product', 'variants', 'colors', 'poSizes', 'gallery'));
     }
 }

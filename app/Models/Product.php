@@ -30,4 +30,32 @@ class Product extends Model
     {
         return $this->hasMany(ProductVariant::class);
     }
+
+    public function images(): HasMany
+    {
+        return $this->hasMany(ProductImage::class)->orderBy('sort_order')->orderBy('id');
+    }
+
+    /** Foto khusus warna lebih dulu, lalu foto umum (berlaku untuk semua warna). */
+    public function imageUrls(?string $color = null): array
+    {
+        $images = $this->relationLoaded('images') ? $this->images : $this->images()->get();
+        $wanted = $color === null ? null : mb_strtolower($color);
+
+        $specific = $wanted === null
+            ? collect()
+            : $images->filter(fn ($i) => $i->color !== null && mb_strtolower($i->color) === $wanted);
+
+        return $specific->concat($images->whereNull('color'))
+            ->map(fn ($i) => $i->url)
+            ->values()
+            ->all();
+    }
+
+    public function coverUrl(): ?string
+    {
+        $images = $this->relationLoaded('images') ? $this->images : $this->images()->get();
+
+        return $images->first()?->url;
+    }
 }

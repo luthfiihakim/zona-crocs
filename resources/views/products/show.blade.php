@@ -59,7 +59,76 @@
     </table>
 </div>
 
-<h2 class="section-title">Tambah varian (generator)</h2>
+{{-- ===== BLOK FOTO PRODUK DISISIPKAN DI SINI ===== --}}
+<h2 class="section-title">Foto produk ({{ $product->images->count() }})</h2>
+
+@if ($errors->any())
+    <div class="alert bad">
+        <ul class="error-list">
+            @foreach ($errors->all() as $e)<li>{{ $e }}</li>@endforeach
+        </ul>
+    </div>
+@endif
+
+<div class="card">
+    @if ($product->images->isEmpty())
+        <p class="muted">Belum ada foto. Unggah di bawah.</p>
+    @else
+        <div class="photo-grid">
+            @foreach ($product->images as $img)
+                <div class="photo-card">
+                    <img src="{{ $img->url }}" alt="Foto {{ $product->name }}" loading="lazy">
+                    <form method="POST" action="{{ route('product-images.update', $img) }}" enctype="multipart/form-data">
+                        @csrf
+                        @method('PUT')
+                        <label>Untuk warna
+                            <select name="color">
+                                <option value="">Semua warna (umum)</option>
+                                @foreach ($colors as $c)
+                                    <option value="{{ $c }}" @selected($img->color === $c)>{{ $c }}</option>
+                                @endforeach
+                            </select>
+                        </label>
+                        <label>Urutan
+                            <input type="number" name="sort_order" min="0" max="99" value="{{ $img->sort_order }}" required>
+                        </label>
+                        <label>Ganti foto
+                            <input type="file" name="file" accept="image/jpeg,image/png,image/webp">
+                        </label>
+                        <button class="btn btn-dark btn-sm" type="submit">Simpan</button>
+                    </form>
+                    <form method="POST" action="{{ route('product-images.destroy', $img) }}"
+                          onsubmit="return confirm('Hapus foto ini?')">
+                        @csrf
+                        @method('DELETE')
+                        <button class="btn btn-danger btn-sm" type="submit">Hapus</button>
+                    </form>
+                </div>
+            @endforeach
+        </div>
+    @endif
+</div>
+
+<div class="card wide" style="margin-top:16px">
+    <form method="POST" action="{{ route('products.images.store', $product) }}" enctype="multipart/form-data">
+        @csrf
+        <label>Pilih foto (boleh banyak, maks. 8)
+            <input type="file" name="photos[]" accept="image/jpeg,image/png,image/webp" multiple required>
+        </label>
+        <label>Untuk warna
+            <select name="color">
+                <option value="">Semua warna (umum)</option>
+                @foreach ($colors as $c)
+                    <option value="{{ $c }}">{{ $c }}</option>
+                @endforeach
+            </select>
+        </label>
+        <button class="btn" type="submit">UNGGAH FOTO</button>
+    </form>
+</div>
+
+{{-- ===== BAGIAN GENERATOR VARIAN SETELAH FOTO ===== --}}
+<h2 class="section-title" style="margin-top:24px">Tambah varian (generator)</h2>
 <div class="card wide">
     <form method="POST" action="{{ route('products.variants.store', $product) }}">
         @csrf
@@ -97,5 +166,5 @@
     </form>
 </div>
 
-<p class="muted"><a href="{{ route('products.index') }}">Kembali ke daftar produk</a></p>
+<p class="muted" style="margin-top:16px"><a href="{{ route('products.index') }}">Kembali ke daftar produk</a></p>
 @endsection

@@ -29,9 +29,17 @@
 
 <div class="product-grid">
     @forelse ($products as $p)
+        @php
+            $thumbnail = $p->imageUrls()[0] ?? null;
+        @endphp
         <a class="product-card" href="{{ route('catalog.show', $p->slug) }}">
             <div class="product-img">
-                <span>{{ mb_strtoupper(mb_substr($p->name, 0, 1)) }}</span>
+                @if ($thumbnail)
+                    <img src="{{ $thumbnail }}" alt="{{ $p->name }}" loading="lazy" style="width: 100%; height: 100%; object-fit: cover; position: absolute; top: 0; left: 0;">
+                @else
+                    <span>{{ mb_strtoupper(mb_substr($p->name, 0, 1)) }}</span>
+                @endif
+
                 @if (($p->ready_stock ?? 0) <= 0)
                     <em class="sold">Habis</em>
                 @endif

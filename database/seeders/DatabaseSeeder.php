@@ -14,5 +14,9 @@ class DatabaseSeeder extends Seeder
             CatalogSeeder::class,
             SupplierSeeder::class,
         ]);
+
+        if ($this->command) {
+            $this->command->call('images:import');
+        }
     }
 }

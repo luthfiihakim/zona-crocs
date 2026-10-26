@@ -11,6 +11,7 @@ use App\Models\Supplier;
 use App\Models\User;
 use App\Services\SaleService;
 use Illuminate\Support\Str;
+use Illuminate\Http\UploadedFile;
 
 trait BuildsShop
 {
@@ -98,5 +99,18 @@ trait BuildsShop
              'payment_method' => null, 'shipping_address' => 'Alamat uji lengkap No. 123, Medan', 'paid_at' => null],
             true
         );
+    }
+
+    protected function fakeImage(string $name = 'foto.png', int $w = 400, int $h = 400): UploadedFile
+    {
+        $raw = str_repeat("\x00".str_repeat("\xff\xff\xff", $w), $h);
+        $chunk = fn (string $type, string $data) => pack('N', strlen($data)).$type.$data.pack('N', crc32($type.$data));
+
+        $png = "\x89PNG\r\n\x1a\n"
+            .$chunk('IHDR', pack('NNCCCCC', $w, $h, 8, 2, 0, 0, 0))
+            .$chunk('IDAT', gzcompress($raw, 9))
+            .$chunk('IEND', '');
+
+        return UploadedFile::fake()->createWithContent($name, $png);
     }
 }

@@ -4,8 +4,68 @@
     @section('announce', 'Ukuran '.$poSizes->implode(', ').' wajib PO')
 @endif
 @section('content')
+<style>
+    .product-gallery-wrap {
+        position: relative;
+    }
+    .product-img.slider {
+        position: relative;
+        overflow: hidden;
+        border-radius: 8px;
+    }
+    #slideTrack {
+        display: flex;
+        width: 100%;
+        height: 100%;
+        overflow-x: auto;
+        scroll-snap-type: x mandatory;
+        scrollbar-width: none; /* Firefox */
+        -ms-overflow-style: none; /* IE/Edge */
+        scroll-behavior: smooth;
+    }
+    #slideTrack::-webkit-scrollbar {
+        display: none; /* Chrome/Safari */
+    }
+    .slide-img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        flex: 0 0 100%;
+        scroll-snap-align: start;
+        scroll-snap-stop: always;
+    }
+    .slider-dots {
+        display: flex;
+        justify-content: center;
+        gap: 6px;
+        margin-top: 10px;
+    }
+    .slider-dots .dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background-color: #ccc;
+        cursor: pointer;
+        transition: background-color 0.2s;
+    }
+    .slider-dots .dot.active {
+        background-color: #333;
+    }
+</style>
+
 <div class="detail">
-    <div class="product-img"><span>{{ mb_strtoupper(mb_substr($product->name, 0, 1)) }}</span></div>
+    {{-- Bagian Galeri Geser / Slider Foto Produk --}}
+    <div class="product-gallery-wrap">
+        <div class="product-img slider" id="productSlider">
+            <div class="slides" id="slideTrack">
+                {{-- Placeholder jika belum ada foto --}}
+                <div class="slide fallback-slide" style="display:none">
+                    <span>{{ mb_strtoupper(mb_substr($product->name, 0, 1)) }}</span>
+                </div>
+            </div>
+        </div>
+        <div class="slider-dots" id="sliderDots"></div>
+    </div>
 
     <div>
         <small class="muted">{{ $product->category->name }}</small>
@@ -74,11 +134,60 @@
 
 <script>
     const variants = @json($variants);
+    const gallery = @json($gallery);
+    const productName = @json($product->name);
+
     const colorSel = document.getElementById('color');
     const sizeSel = document.getElementById('size');
     const info = document.getElementById('info');
     const vid = document.getElementById('variant_id');
     const btn = document.getElementById('add');
+    const slideTrack = document.getElementById('slideTrack');
+    const sliderDots = document.getElementById('sliderDots');
+
+    function renderGallery() {
+        if (!slideTrack) return;
+        const currentColor = colorSel ? colorSel.value : Object.keys(gallery)[0];
+        const images = (gallery[currentColor] && gallery[currentColor].length > 0) 
+            ? gallery[currentColor] 
+            : (gallery['Original'] || Object.values(gallery)[0] || []);
+
+        slideTrack.innerHTML = '';
+        sliderDots.innerHTML = '';
+
+        if (images.length === 0) {
+            slideTrack.innerHTML = `<div class="slide fallback-slide" style="display:flex;align-items:center;justify-content:center;width:100%;height:100%;background:#f4f4f0;font-size:4rem;font-weight:bold;color:#888;">${productName.charAt(0).toUpperCase()}</div>`;
+            return;
+        }
+
+        images.forEach((url, idx) => {
+            const img = document.createElement('img');
+            img.src = url;
+            img.alt = productName;
+            img.className = 'slide-img';
+            img.loading = 'lazy';
+            slideTrack.appendChild(img);
+
+            const dot = document.createElement('span');
+            dot.className = 'dot' + (idx === 0 ? ' active' : '');
+            dot.addEventListener('click', () => {
+                slideTrack.scrollTo({
+                    left: slideTrack.clientWidth * idx,
+                    behavior: 'smooth'
+                });
+            });
+            sliderDots.appendChild(dot);
+        });
+
+        // Update dot aktif saat digeser (scroll)
+        slideTrack.onscroll = () => {
+            const index = Math.round(slideTrack.scrollLeft / slideTrack.clientWidth);
+            const dots = sliderDots.querySelectorAll('.dot');
+            dots.forEach((d, i) => {
+                d.classList.toggle('active', i === index);
+            });
+        };
+    }
 
     function renderSizes() {
         if (!sizeSel) return;
@@ -105,9 +214,14 @@
     }
 
     if (colorSel) {
-        colorSel.addEventListener('change', renderSizes);
+        colorSel.addEventListener('change', () => {
+            renderSizes();
+            renderGallery();
+        });
         sizeSel.addEventListener('change', update);
         renderSizes();
     }
+    
+    renderGallery();
 </script>
 @endsection

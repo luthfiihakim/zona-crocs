@@ -16,6 +16,7 @@ use App\Http\Controllers\MidtransNotificationController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\ProductImageController;
 
 Route::get('/', function () {
     $user = auth()->user();
@@ -46,12 +47,14 @@ Route::middleware(['auth', 'active'])->group(function () {
         Route::resource('categories', CategoryController::class)->except(['show', 'destroy']);
         Route::resource('suppliers', SupplierController::class)->except(['show', 'destroy']);
         Route::resource('products', ProductController::class)->except(['destroy']);
-        Route::post('/products/{product}/variants', [ProductVariantController::class, 'store'])
-            ->name('products.variants.store');
+        Route::post('/products/{product}/variants', [ProductVariantController::class, 'store'])->name('products.variants.store');
         Route::get('/variants/{variant}/edit', [ProductVariantController::class, 'edit'])->name('variants.edit');
         Route::put('/variants/{variant}', [ProductVariantController::class, 'update'])->name('variants.update');
         Route::resource('purchases', PurchaseController::class)->only(['index', 'create', 'store', 'show']);
         Route::resource('sales', SaleController::class)->only(['index', 'create', 'store', 'show']);
+        Route::post('/products/{product}/images', [ProductImageController::class, 'store'])->name('products.images.store');
+        Route::put('/product-images/{image}', [ProductImageController::class, 'update'])->name('product-images.update');
+        Route::delete('/product-images/{image}', [ProductImageController::class, 'destroy'])->name('product-images.destroy');
     });
 
     Route::middleware('role:admin')->group(function () {
