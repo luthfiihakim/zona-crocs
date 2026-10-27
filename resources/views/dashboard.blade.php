@@ -34,6 +34,10 @@
         <small>Varian stok rendah</small>
         <b>{{ $stats['low_stock'] }}</b>
     </div>
+    <a class="stat {{ $stats['no_photo'] > 0 ? 'warn' : '' }}" href="{{ route('photos.index') }}" style="display:block;text-decoration:none;color:inherit">
+        <small>Produk tanpa foto</small>
+        <b>{{ $stats['no_photo'] }}</b>
+    </a>
 </div>
 
 <div class="two-col">

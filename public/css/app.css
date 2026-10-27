@@ -149,3 +149,8 @@ textarea:focus{outline:2px solid var(--lime);border-color:var(--ink)}
 .new-photo .np-info{flex:1 1 140px;min-width:0;display:flex;flex-direction:column;overflow:hidden}
 .new-photo .np-info b{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:14px}
 .new-photo select{width:auto;min-height:40px;margin:0;flex:0 1 190px}
+
+.thumbs{display:flex;gap:6px;flex-wrap:wrap}
+.thumbs img{width:44px;height:44px;object-fit:contain;border:1px solid var(--line);border-radius:6px;background:#fff}
+.row-upload{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.row-upload input[type=file]{margin:0;width:auto;min-height:40px;flex:1 1 200px}

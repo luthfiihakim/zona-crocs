@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Product;
 use App\Models\ProductVariant;
 use App\Models\Sale;
+use App\Services\PhotoGapService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -22,6 +23,7 @@ class DashboardController extends Controller
             'pending' => Sale::where('status', 'pending')->count(),
             'active_products' => Product::where('is_active', true)->count(),
             'low_stock' => $this->lowStockQuery()->count(),
+            'no_photo' => app(PhotoGapService::class)->rows('', true)->filter(fn ($r) => $r['missing'] > 0)->count(),
         ];
 
         // Omzet 7 hari terakhir

@@ -17,6 +17,7 @@ use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ProductImageController;
+use App\Http\Controllers\PhotoController;
 
 Route::get('/', function () {
     $user = auth()->user();
@@ -55,6 +56,7 @@ Route::middleware(['auth', 'active'])->group(function () {
         Route::post('/products/{product}/images', [ProductImageController::class, 'store'])->name('products.images.store');
         Route::put('/product-images/{image}', [ProductImageController::class, 'update'])->name('product-images.update');
         Route::delete('/product-images/{image}', [ProductImageController::class, 'destroy'])->name('product-images.destroy');
+        Route::get('/foto-produk', [PhotoController::class, 'index'])->name('photos.index');
     });
 
     Route::middleware('role:admin')->group(function () {

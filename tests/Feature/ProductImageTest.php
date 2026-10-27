@@ -258,4 +258,33 @@ class ProductImageTest extends TestCase
 
         $this->assertDatabaseCount('product_images', 0);
     }
+
+    public function test_photo_page_lists_only_products_with_missing_photos_by_default(): void
+    {
+        $withPhoto = $this->makeVariant()->product;
+        $withoutPhoto = $this->makeVariant()->product;
+        ProductImage::create([
+            'product_id' => $withPhoto->id, 'color' => null,
+            'path' => "images/products/{$withPhoto->slug}/x.jpg", 'sort_order' => 1,
+        ]);
+        $staff = $this->makeUser('staff');
+        $this->actingAs($staff)->get(route('photos.index'))->assertOk()
+            ->assertSee($withoutPhoto->name)->assertDontSee($withPhoto->name);
+        $this->actingAs($staff)->get(route('photos.index', ['filter' => 'all']))
+            ->assertSee($withPhoto->name)->assertSee($withoutPhoto->name);
+    }
+
+    public function test_customer_cannot_open_photo_page(): void
+    {
+        $this->actingAs($this->makeUser('customer'))->get(route('photos.index'))->assertForbidden();
+    }
+
+    public function test_upload_from_photo_page_returns_to_the_page(): void
+    {
+        $product = $this->makeVariant()->product;
+        $this->actingAs($this->makeUser('staff'))->post(route('products.images.store', $product), [
+            'photos' => [$this->fakeImage()], 'color' => null, 'from' => 'photos', 'filter' => 'missing',
+        ])->assertRedirect(route('photos.index', ['filter' => 'missing']));
+        $this->assertDatabaseCount('product_images', 1);
+    }
 }

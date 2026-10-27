@@ -9,11 +9,16 @@ use App\Services\ProductImageService;
 
 class ProductImageController extends Controller
 {
-    public function store(ProductImageRequest $request, Product $product, ProductImageService $images)
+   public function store(ProductImageRequest $request, Product $product, ProductImageService $images)
     {
         $count = $images->addMany($product, $request->file('photos', []), $request->input('color') ?: null);
+        $message = "{$count} foto ditambahkan.";
 
-        return redirect()->route('products.show', $product)->with('success', "{$count} foto ditambahkan.");
+        if ($request->input('from') === 'photos') {
+            return redirect()->route('photos.index', array_filter($request->only('filter', 'q')))->with('success', $message);
+        }
+
+        return redirect()->route('products.show', $product)->with('success', $message);
     }
 
     public function update(ProductImageRequest $request, ProductImage $image, ProductImageService $images)
