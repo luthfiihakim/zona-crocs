@@ -20,9 +20,8 @@ Aplikasi web manajemen **inventori dan penjualan** untuk toko sepatu Crocs UMKM 
 12. [Keamanan](#12-keamanan)
 13. [Struktur direktori](#13-struktur-direktori)
 14. [Dokumentasi tambahan](#14-dokumentasi-tambahan)
-15. [Tangkapan layar](#15-tangkapan-layar)
-16. [Keterbatasan dan rencana pengembangan](#16-keterbatasan-dan-rencana-pengembangan)
-17. [Catatan penggunaan data dan foto](#17-catatan-penggunaan-data-dan-foto)
+15. [Keterbatasan dan rencana pengembangan](#15-keterbatasan-dan-rencana-pengembangan)
+16. [Catatan penggunaan data dan foto](#16-catatan-penggunaan-data-dan-foto)
 
 ---
 
@@ -236,28 +235,7 @@ docs/                    ERD, test case, screenshot, bukti
 - **[docs/ERD.md](docs/ERD.md)**: ERD final (12 tabel) dan penjelasan relasi.
 - **[docs/TEST_CASES.md](docs/TEST_CASES.md)**: test case otomatis dan manual beserta hasilnya.
 
-## 15. Tangkapan layar
-
-Disimpan di `docs/screenshots/`.
-
-| Halaman | Berkas |
-|---|---|
-| Login | ![Login](docs/screenshots/01-login.png) |
-| Katalog customer | ![Katalog](docs/screenshots/02-katalog.png) |
-| Detail produk (pilih warna, galeri) | ![Detail produk](docs/screenshots/03-detail-produk.png) |
-| Checkout | ![Checkout](docs/screenshots/04-checkout.png) |
-| Popup pembayaran Midtrans | ![Pembayaran](docs/screenshots/05-pembayaran-snap.png) |
-| Pesanan berstatus Lunas | ![Lunas](docs/screenshots/06-pesanan-lunas.png) |
-| Dashboard admin | ![Dashboard](docs/screenshots/07-dashboard.png) |
-| Produk, varian, dan generator | ![Varian](docs/screenshots/08-produk-varian.png) |
-| Pembelian (barang masuk) | ![Pembelian](docs/screenshots/09-pembelian.png) |
-| Penjualan kasir | ![Penjualan](docs/screenshots/10-penjualan.png) |
-| Stok rendah | ![Stok rendah](docs/screenshots/11-stok-rendah.png) |
-| Manajemen pengguna | ![Pengguna](docs/screenshots/12-pengguna.png) |
-| Akses ditolak (403) | ![403](docs/screenshots/13-akses-ditolak.png) |
-| Hasil `php artisan test` | ![Hasil tes](docs/screenshots/14-hasil-tes.png) |
-
-## 16. Keterbatasan dan rencana pengembangan
+## 15. Keterbatasan dan rencana pengembangan
 
 **Keterbatasan saat ini**
 
@@ -274,6 +252,6 @@ Disimpan di `docs/screenshots/`.
 
 **Rencana pengembangan:** sistem PO dengan bayar penuh di muka, halaman terpusat untuk melengkapi foto produk, ongkos kirim, stok opname (penyesuaian stok dengan alasan), laporan penjualan per periode, dan pengubahan ukuran foto otomatis.
 
-## 17. Catatan penggunaan data dan foto
+## 16. Catatan penggunaan data dan foto
 
 Nama toko, daftar produk, harga, dan ukuran digunakan **dengan izin pemilik usaha**. Tidak ada data pelanggan asli di repositori ini; akun dan stok awal adalah data demo. Foto produk digunakan untuk keperluan tugas kuliah dengan izin pemilik toko. Merek dan karakter pada produk adalah milik pemegang haknya masing-masing.
